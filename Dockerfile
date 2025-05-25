@@ -1,18 +1,21 @@
-# ──────────────── Stage 1: build ────────────────
 FROM node:23-alpine AS builder
+
 WORKDIR /app
 
-# only copy package manifests so npm ci caches
 COPY package.json package-lock.json ./
+
 RUN npm ci
 
 # copy source & build
 COPY . .
+
 RUN npm run build   # → outputs to /app/dist
 
 # ──────────────── Stage 2: serve ────────────────
+
 FROM nginx:stable-alpine
 # remove default static content
+
 RUN rm -rf /usr/share/nginx/html/*
 
 # copy built files

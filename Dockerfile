@@ -9,7 +9,7 @@ RUN npm ci
 # copy source & build
 COPY . .
 
-RUN npm run build   # → outputs to /app/dist
+RUN npm run build   # → outputs to vite => /app/dist react-app =>/app/build 
 
 # ──────────────── Stage 2: serve ────────────────
 

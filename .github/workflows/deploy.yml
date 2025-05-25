@@ -81,3 +81,4 @@ jobs:
                         --name react-app \
                         -p 3000:80 \
                         react-app:latest
+                      sudo systemctl restart nginx

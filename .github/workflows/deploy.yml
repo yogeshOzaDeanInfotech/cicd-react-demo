@@ -34,22 +34,16 @@ jobs:
                   # 5) The actual shell script to run over SSH
                   script: |
                       set -e
-                      # ----------------------------------------
-                      # A) Install or update Nginx on the host
-                      # ----------------------------------------
-                      sudo apt-get update -y
-                      sudo apt-get install -y nginx
 
-                      # Remove the default Nginx welcome site so it won’t intercept port 80
+
                       sudo rm -f /etc/nginx/sites-enabled/default
 
-                      # ---------------------------------------------------
-                      # B) Write your custom Nginx proxy config for React
-                      # ---------------------------------------------------
+
                       sudo tee /etc/nginx/sites-available/react-app.conf > /dev/null << 'EOF'
                       upstream react_app {
                           server 127.0.0.1:3000;
                       }
+
 
                       server {
                           # Listen on port 80 as the default server
@@ -57,39 +51,37 @@ jobs:
                           listen [::]:80 default_server;
                           server_name _;
 
+
                           # Proxy all requests to the React container on localhost:3000
                           location / {
-                              proxy_pass         http://react_app;
                               proxy_http_version 1.1;
-                              proxy_set_header   Upgrade $http_upgrade;
-                              proxy_set_header   Connection  "upgrade";
-                              proxy_set_header   Host        $host;
-                              proxy_cache_bypass $http_upgrade;
                           }
                       }
                       EOF
 
+
                       # Enable the new site by symlinking into sites-enabled
                       sudo ln -sfn /etc/nginx/sites-available/react-app.conf /etc/nginx/sites-enabled/react-app.conf
 
+
                       # Test Nginx config syntax and restart to apply changes
                       sudo nginx -t
-                      sudo systemctl enable nginx
                       sudo systemctl restart nginx
+
 
                       # ---------------------------------------------------
                       # C) Pull latest code, build Docker image, and run it
                       # ---------------------------------------------------
+                      rm -rf react-app
+                      mkdir react-app
                       cd ~/react-app
+                      git clone https://github.com/yogeshOzaDeanInfotech/cicd-react-demo.git .
                       git fetch origin main
-                      git reset --hard origin/main
+
 
                       # Build the multi-stage Docker image defined in your Dockerfile
                       sudo docker build -t react-app:latest .
 
-                      # Stop & remove any old container named "react-app"
-                      sudo docker stop react-app 2>/dev/null || true
-                      sudo docker rm   react-app 2>/dev/null || true
 
                       # Run the new container:
                       # - Name it "react-app"
@@ -98,6 +90,3 @@ jobs:
                         --name react-app \
                         -p 3000:80 \
                         react-app:latest
-
-                      # Clean up any dangling (unused) Docker images
-                      sudo docker image prune -f

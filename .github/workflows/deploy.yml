@@ -65,6 +65,7 @@ jobs:
                       # ---------------------------------------------------
                       # C) Pull latest code, build Docker image, and run it
                       # ---------------------------------------------------
+                      mkdir react-app
                       cd ~/react-app
                       git fetch origin main
 

@@ -1,5 +1,4 @@
-# File: .github/workflows/deploy.yml
-name: CI/CD for React App (with Nginx provisioning)
+name: CI/CD for React App
 
 # 1) Trigger this workflow on every push to "main"
 on:
@@ -8,7 +7,6 @@ on:
 
 jobs:
     deploy:
-        # 2) Run all steps on a fresh Ubuntu VM hosted by GitHub Actions
         runs-on: ubuntu-latest
 
         steps:
@@ -35,11 +33,6 @@ jobs:
                   # 5) The actual shell script to run over SSH
                   script: |
                       set -e
-                      # ----------------------------------------
-                      # A) Install or update Nginx on the host
-                      # ----------------------------------------
-                      sudo apt-get update -y
-                      sudo apt-get install -y nginx
 
                       # Remove the default Nginx welcome site so it won’t intercept port 80
                       sudo rm -f /etc/nginx/sites-enabled/default
@@ -81,7 +74,10 @@ jobs:
                       # ---------------------------------------------------
                       # C) Pull latest code, build Docker image, and run it
                       # ---------------------------------------------------
+                      rm -rf react-app
+                      mkdir react-app
                       cd ~/react-app
+                      git clone https://github.com/yogeshOzaDeanInfotech/cicd-react-demo.git .
                       git fetch origin main
                       git reset --hard origin/main
 
@@ -89,8 +85,8 @@ jobs:
                       sudo docker build -t react-app:latest .
 
                       # Stop & remove any old container named "react-app"
-                      sudo docker stop react-app 2>/dev/null || true
-                      sudo docker rm   react-app 2>/dev/null || true
+                      sudo docker stop react-app
+                      sudo docker rm   react-app
 
                       # Run the new container:
                       # - Name it "react-app"

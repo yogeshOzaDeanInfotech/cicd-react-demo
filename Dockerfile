@@ -17,4 +17,4 @@ COPY . .
 RUN npm run build
 
 # Tell Docker the container listens on port 80 at runtime
-EXPOSE 80
+EXPOSE 3000

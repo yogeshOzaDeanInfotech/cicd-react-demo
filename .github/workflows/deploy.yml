@@ -67,6 +67,7 @@ jobs:
                       # ---------------------------------------------------
                       mkdir react-app
                       cd ~/react-app
+                      git clone https://github.com/yogeshOzaDeanInfotech/cicd-react-demo.git .
                       git fetch origin main
 
                       # Build the multi-stage Docker image defined in your Dockerfile

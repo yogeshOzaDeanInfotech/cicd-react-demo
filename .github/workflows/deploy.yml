@@ -32,7 +32,7 @@ jobs:
                   port: ${{ secrets.EC2_PORT }}
 
                   # 5) The actual shell script to run over SSH
-                    script: |
+                  script: |
                       set -e
                       # ----------------------------------------
                       # A) Install or update Nginx on the host

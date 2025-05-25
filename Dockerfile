@@ -16,5 +16,12 @@ COPY . .
 # Run the build script (Vite will output production files to /app/dist)
 RUN npm run build
 
+# ──────────────── Stage 2: Serve with Nginx ────────────────
+# Switch to an Nginx base image for minimal overhead
+FROM nginx:stable-alpine
+
 # Tell Docker the container listens on port 80 at runtime
-EXPOSE 3000
+EXPOSE 80
+
+# Start Nginx in the foreground (daemon off) so Docker can manage the process
+CMD ["nginx", "-g", "daemon off;"]

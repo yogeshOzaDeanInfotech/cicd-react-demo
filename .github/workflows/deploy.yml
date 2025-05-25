@@ -78,7 +78,8 @@ jobs:
                       git clone https://github.com/yogeshOzaDeanInfotech/cicd-react-demo.git .
                       git fetch origin main
 
-
+                      sudo docker stop react-app
+                      sudo docker rm react-app
                       # Build the multi-stage Docker image defined in your Dockerfile
                       sudo docker build -t react-app:latest .
 
